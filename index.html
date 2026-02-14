@@ -211,6 +211,148 @@
         @media (max-width: 767.98px) {
             .step { margin: 18px 0; }
         }
+    /* Gift Box Animation */
+        .gift-scene {
+            display: grid;
+            place-items: center;
+            width: 100%;
+            margin: 10px 0 6px;
+        }
+        .gift-box {
+            position: relative;
+            width: clamp(160px, 40vw, 260px);
+            height: clamp(140px, 30vw, 200px);
+            transform-style: preserve-3d;
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .gift-box .box-body {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 78%;
+            background: linear-gradient(135deg, #fecdd3, #fda4af);
+            border-radius: 12px;
+            box-shadow: 0 14px 40px rgba(244, 63, 94, 0.25);
+        }
+        .gift-box .box-lid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 34%;
+            background: linear-gradient(135deg, #f43f5e, #ec4899);
+            border-radius: 12px 12px 8px 8px;
+            transform-origin: 50% 100%;
+            transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+            box-shadow: 0 12px 30px rgba(236, 72, 153, 0.35);
+        }
+        .ribbon-vertical, .ribbon-horizontal {
+            position: absolute;
+            background: linear-gradient(180deg, #fde68a, #f59e0b);
+        }
+        .ribbon-vertical {
+            top: 0; bottom: 0; left: 50%; width: 12%; transform: translateX(-50%);
+            border-radius: 6px;
+            filter: saturate(1.1);
+        }
+        .ribbon-horizontal {
+            left: 0; right: 0; top: 36%; height: 12%;
+            border-radius: 6px;
+            filter: saturate(1.1);
+        }
+        .bow {
+            position: absolute;
+            top: 10%;
+            width: 22%;
+            height: 22%;
+            background: radial-gradient(circle at 30% 30%, #fde68a, #f59e0b);
+            border-radius: 50% 50% 45% 45% / 55% 55% 45% 45%;
+            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.35);
+        }
+        .bow-left { left: 32%; transform: rotate(-18deg); }
+        .bow-right { right: 32%; transform: rotate(18deg); }
+
+        /* Wiggle before opening */
+        @keyframes wiggle {
+            0%, 100% { transform: translateY(0) rotate(0); }
+            20% { transform: translateY(-3px) rotate(-2deg); }
+            40% { transform: translateY(0) rotate(1.6deg); }
+            60% { transform: translateY(-2px) rotate(-1.4deg); }
+            80% { transform: translateY(0) rotate(1deg); }
+        }
+        .gift-box.shake { animation: wiggle 0.6s ease-in-out 1; }
+
+        /* Open state */
+        .gift-box.open .box-lid {
+            transform: rotateX(75deg) translateZ(2px);
+            box-shadow: 0 20px 40px rgba(236, 72, 153, 0.4);
+        }
+
+        /* Gift reveal (balloons + photo) */
+        .gift-reveal {
+            position: relative;
+            margin-top: 12px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+            z-index: 3; /* ensure above the gift box */
+        }
+        .gift-reveal.show { opacity: 1; visibility: visible; }
+
+        .reveal-items {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 18px;
+            min-height: 96px;
+        }
+        .reveal-emoji {
+            font-size: clamp(56px, 12vw, 96px);
+            line-height: 1;
+            filter: drop-shadow(0 10px 18px rgba(0,0,0,0.18));
+            transform: translateY(40px) scale(0.85);
+            opacity: 0;
+            will-change: transform, opacity;
+            user-select: none;
+        }
+        .reveal-emoji.bouquet { transform-origin: 50% 100%; }
+        .reveal-emoji.bear { transform-origin: 50% 100%; }
+
+        .balloons {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -10px;
+            top: -10px;
+            pointer-events: none;
+            overflow: visible;
+        }
+        .balloon {
+            position: absolute;
+            bottom: 0;
+            border-radius: 50% 50% 45% 45% / 55% 55% 45% 45%;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+            animation: rise var(--dur) ease-out var(--delay) forwards;
+        }
+        .balloon::after {
+            content: '';
+            position: absolute;
+            bottom: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 18px;
+            background: rgba(0, 0, 0, 0.12);
+        }
+        @keyframes rise {
+            0% { transform: translateY(36px) scale(0.9); opacity: 0; }
+            15% { opacity: 0.95; }
+            100% { transform: translateY(-360px) scale(1.05); opacity: 0; }
+        }
     </style>
 </head>
 
@@ -228,18 +370,44 @@
         </div>
 
         <div id="content">
+         
+
             <!-- Step 1: Initial Reveal -->
             <div class="step active" id="step1">
                 <div class="emoji heart-beat">❤️</div>
-                <h1 class="text-4xl md:text-5xl font-bold mb-4 text-gradient">Hi, beautiful soul 💓</h1>
+                <h1 class="text-4xl md:text-5xl font-bold mb-4 text-gradient">Hi, beautiful Girl 💓</h1>
                 <p class="text-lg md:text-xl text-gray-700 mb-6">I made something little but heartfelt for your birthday.</p>
                 <button class="btn" id="start-btn">Open your surprise</button>
+            </div>
+
+               <!-- Gift Step: Animated Present -->
+            <div class="step" id="gift-step">
+                <div class="emoji heart-beat">🎁</div>
+                <h1 class="text-4xl md:text-5xl font-bold mb-3 text-gradient">A little present for you</h1>
+                <p class="text-lg md:text-xl text-gray-700 mb-6">Tap the gift to open</p>
+                <div class="gift-scene">
+                    <div id="gift-box" class="gift-box">
+                        <div class="box-body"></div>
+                        <div class="box-lid"></div>
+                        <div class="ribbon-vertical"></div>
+                        <div class="ribbon-horizontal"></div>
+                        <div class="bow bow-left"></div>
+                        <div class="bow bow-right"></div>
+                    </div>
+                </div>
+                <div id="gift-reveal" class="gift-reveal">
+                    <div id="balloons" class="balloons"></div>
+                    <div class="reveal-items">
+                        <span class="reveal-emoji bouquet" aria-label="Bouquet">💐</span>
+                        <span class="reveal-emoji bear" aria-label="Teddy Bear">🧸</span>
+                    </div>
+                </div>
             </div>
 
             <!-- Step 2: Birthday Message -->
             <div class="step" id="step2">
                 <div class="emoji">🎉</div>
-                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-gradient">Happy 22nd Birthday, Khin Yupar! 🎈</h2>
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 text-gradient">Happy 22<sup class="text-3xl md:text-4xl font-bold mb-6 text-gradient">nd</sup> Birthday, Khin Yupar! 🎈</h2>
                 <p class="text-lg text-gray-700 mb-2">
                     Today is all about celebrating you the kind, bright, and strong woman you are.
                 </p>
@@ -415,6 +583,21 @@
 
         animate();
 
+        // Ensure hearts background is visible after navigation/celebrations
+        function resetBackgroundHearts() {
+            if (!Array.isArray(hearts)) return;
+            hearts.forEach(heart => {
+                if (window.gsap) {
+                    gsap.killTweensOf(heart.position);
+                    gsap.killTweensOf(heart.material);
+                }
+                heart.position.x = heart.userData.originalX;
+                heart.position.y = heart.userData.originalY;
+                heart.position.z = heart.userData.originalZ;
+                heart.material.opacity = 0.9;
+            });
+        }
+
         // Handle window resize
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
@@ -422,9 +605,90 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
+        // Gift Step Logic
+        const giftStep = document.getElementById('gift-step');
+        const giftBox = document.getElementById('gift-box');
+        const giftReveal = document.getElementById('gift-reveal');
+        const balloonContainer = document.getElementById('balloons');
+
+        // Create floating balloons with random positions/colors
+        function spawnBalloons(count = 24) {
+            if (!balloonContainer) return;
+            balloonContainer.innerHTML = '';
+            const colors = ['#ff6b6b', '#ff8e8e', '#ffd166', '#93c5fd', '#a7f3d0', '#fda4af'];
+            for (let i = 0; i < count; i++) {
+                const b = document.createElement('span');
+                b.className = 'balloon';
+                const size = Math.floor(26 + Math.random() * 28);
+                b.style.width = size + 'px';
+                b.style.height = Math.floor(size * 1.35) + 'px';
+                b.style.left = (4 + Math.random() * 92) + '%';
+                b.style.setProperty('--delay', (Math.random() * 0.8).toFixed(2) + 's');
+                b.style.setProperty('--dur', (2.3 + Math.random() * 1.4).toFixed(2) + 's');
+                const c = colors[Math.floor(Math.random() * colors.length)];
+                b.style.background = `radial-gradient(circle at 30% 30%, ${c}cc, ${c})`;
+                balloonContainer.appendChild(b);
+            }
+        }
+
+        function openGift() {
+            if (!giftBox || giftBox.classList.contains('open')) return;
+            giftBox.classList.add('open');
+
+            // Confetti bursts
+            confetti({
+                particleCount: 120,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#ff3b6b', '#ff8fb2', '#ffd166', '#f59e0b']
+            });
+            setTimeout(() => {
+                confetti({
+                    particleCount: 40,
+                    spread: 60,
+                    origin: { y: 0.45 },
+                    shapes: ['heart'],
+                    colors: ['#ff0000', '#ff69b4']
+                });
+            }, 250);
+
+            // Show balloons and photo
+            if (giftReveal) {
+                giftReveal.classList.add('show');
+            }
+            // First wave
+            spawnBalloons(28);
+            // Second wave for richness
+            setTimeout(() => spawnBalloons(18), 900);
+
+            // Animate bouquet + bear emerging from the box
+            const items = giftStep.querySelectorAll('.reveal-emoji');
+            if (items && items.length && window.gsap) {
+                items.forEach(el => { el.style.opacity = '0'; el.style.transform = 'translateY(40px) scale(0.85)'; });
+                gsap.to(items, { duration: 1.2, opacity: 1, y: -68, scale: 1, ease: 'back.out(1.5)', stagger: 0.12 });
+            }
+
+            // Reveal main flow (a little longer)
+            setTimeout(() => {
+                if (giftStep) giftStep.classList.remove('active');
+                // Continue to Step 2 after opening the gift
+                currentStep = 2;
+                showStep(currentStep);
+            }, 4200);
+        }
+
+        if (giftBox) {
+            giftBox.addEventListener('click', () => {
+                // playful shake before opening
+                giftBox.classList.add('shake');
+                setTimeout(openGift, 900);
+            });
+        }
+
         // Step Navigation
         let currentStep = 1;
         const totalSteps = 5;
+        const hasGiftStep = true;
 
         function updateProgressBar() {
             const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
@@ -440,6 +704,8 @@
             // Show current step
             document.getElementById(`step${stepNumber}`).classList.add('active');
 
+            // Reset hearts background in case it was faded by celebrations
+            resetBackgroundHearts();
             // Update progress bar
             updateProgressBar();
 
@@ -451,8 +717,27 @@
 
         // Button event listeners
         document.getElementById('start-btn').addEventListener('click', () => {
-            currentStep = 2;
-            showStep(currentStep);
+            // Show gift step as the next page after Step 1
+            document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+            const gift = document.getElementById('gift-step');
+            if (gift) gift.classList.add('active');
+            // Keep currentStep at 1 so progress remains correct; reset gift box state so it can be opened again
+            if (giftBox) {
+                giftBox.classList.remove('open', 'shake');
+            }
+            if (giftReveal) {
+                giftReveal.classList.remove('show');
+            }
+            if (balloonContainer) {
+                balloonContainer.innerHTML = '';
+            }
+            // Reset reveal items inline animation styles
+            const revealEls = document.querySelectorAll('#gift-step .reveal-emoji');
+            if (revealEls && revealEls.length) {
+                revealEls.forEach(el => { el.style.opacity = ''; el.style.transform = ''; });
+            }
+            resetBackgroundHearts();
+            updateProgressBar();
         });
 
         document.getElementById('next-btn-2').addEventListener('click', () => {
@@ -470,9 +755,36 @@
             showStep(currentStep);
         });
 
-        // Back button
+        // Back button: go to previous numbered step; from gift step return to Step 1
         document.getElementById('back-btn').addEventListener('click', () => {
-            window.history.back();
+            resetBackgroundHearts();
+            const activeStep = document.querySelector('.step.active');
+            const activeId = activeStep ? activeStep.id : '';
+
+            if (activeId === 'gift-step') {
+                // Return to Step 1 (gift is a subpage of step 1)
+                document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+                const s1 = document.getElementById('step1');
+                if (s1) s1.classList.add('active');
+                currentStep = 1;
+                updateProgressBar();
+                return;
+            }
+
+            const match = /^step(\d+)$/.exec(activeId);
+            if (match) {
+                const n = parseInt(match[1], 10);
+                if (n > 1) {
+                    currentStep = n - 1;
+                    showStep(currentStep);
+                    return;
+                } else {
+                    // At Step 1: no prior page
+                    activeStep.classList.add('animate-pulse');
+                    setTimeout(() => activeStep.classList.remove('animate-pulse'), 400);
+                    return;
+                }
+            }
         });
 
         // Confetti button
